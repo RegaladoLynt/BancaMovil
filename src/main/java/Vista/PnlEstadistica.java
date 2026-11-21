@@ -36,7 +36,7 @@ public class PnlEstadistica extends javax.swing.JPanel {
         txtIngresos = new javax.swing.JTextField();
         txtEgresos = new javax.swing.JTextField();
         txtSaldo = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        txtFinal = new javax.swing.JTextField();
         btnConsultar = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -92,9 +92,9 @@ public class PnlEstadistica extends javax.swing.JPanel {
         txtSaldo.setBackground(new java.awt.Color(235, 240, 248));
         add(txtSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, 200, 40));
 
-        jTextField5.setEditable(false);
-        jTextField5.setBackground(new java.awt.Color(235, 240, 248));
-        add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 200, 40));
+        txtFinal.setEditable(false);
+        txtFinal.setBackground(new java.awt.Color(235, 240, 248));
+        add(txtFinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 200, 40));
 
         btnConsultar.setBackground(new java.awt.Color(184, 134, 11));
         btnConsultar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -112,12 +112,12 @@ public class PnlEstadistica extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PnlRepresentacion;
     private javax.swing.JButton btnConsultar;
-    private javax.swing.JTextField jTextField5;
     private javax.swing.JLabel txt1;
     private javax.swing.JLabel txt2;
     private javax.swing.JLabel txt3;
     private javax.swing.JLabel txt4;
     private javax.swing.JTextField txtEgresos;
+    private javax.swing.JTextField txtFinal;
     private javax.swing.JTextField txtIngresos;
     private javax.swing.JTextField txtMes;
     private javax.swing.JLabel txtResultado;
