@@ -32,12 +32,13 @@ public class PnlEstadistica extends javax.swing.JPanel {
         txt1 = new javax.swing.JLabel();
         txt3 = new javax.swing.JLabel();
         txtResultado = new javax.swing.JLabel();
+        txtMensaje = new javax.swing.JLabel();
         txtMes = new javax.swing.JTextField();
+        btnConsultar = new javax.swing.JButton();
         txtIngresos = new javax.swing.JTextField();
         txtEgresos = new javax.swing.JTextField();
         txtSaldo = new javax.swing.JTextField();
         txtFinal = new javax.swing.JTextField();
-        btnConsultar = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(800, 330));
@@ -59,49 +60,53 @@ public class PnlEstadistica extends javax.swing.JPanel {
 
         txt4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txt4.setText("Saldo final:");
-        add(txt4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 100, 40));
+        add(txt4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 100, 30));
 
         txt2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txt2.setText("Ingresos:");
-        add(txt2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 100, 40));
+        add(txt2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 100, 30));
 
         txt1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txt1.setText("Mes:");
-        add(txt1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 50, 40));
+        add(txt1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 50, 40));
 
         txt3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txt3.setText("Egresos:");
-        add(txt3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 100, 40));
+        add(txt3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 100, 30));
 
         txtResultado.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtResultado.setText("Ganancia:");
-        add(txtResultado, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 100, 40));
+        add(txtResultado, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 100, 30));
+
+        txtMensaje.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        txtMensaje.setText("Mensaje:");
+        add(txtMensaje, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 100, 30));
 
         txtMes.setBackground(new java.awt.Color(235, 240, 248));
-        add(txtMes, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, 110, 40));
-
-        txtIngresos.setEditable(false);
-        txtIngresos.setBackground(new java.awt.Color(235, 240, 248));
-        add(txtIngresos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 80, 200, 40));
-
-        txtEgresos.setEditable(false);
-        txtEgresos.setBackground(new java.awt.Color(235, 240, 248));
-        add(txtEgresos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, 200, 40));
-
-        txtSaldo.setEditable(false);
-        txtSaldo.setBackground(new java.awt.Color(235, 240, 248));
-        add(txtSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, 200, 40));
-
-        txtFinal.setEditable(false);
-        txtFinal.setBackground(new java.awt.Color(235, 240, 248));
-        add(txtFinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 200, 40));
+        add(txtMes, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 110, 40));
 
         btnConsultar.setBackground(new java.awt.Color(184, 134, 11));
         btnConsultar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnConsultar.setForeground(new java.awt.Color(255, 255, 255));
         btnConsultar.setText("CONSULTA");
         btnConsultar.addActionListener(this::btnConsultarActionPerformed);
-        add(btnConsultar, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, 130, 40));
+        add(btnConsultar, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 10, 130, 40));
+
+        txtIngresos.setEditable(false);
+        txtIngresos.setBackground(new java.awt.Color(235, 240, 248));
+        add(txtIngresos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, 200, 30));
+
+        txtEgresos.setEditable(false);
+        txtEgresos.setBackground(new java.awt.Color(235, 240, 248));
+        add(txtEgresos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, 200, 30));
+
+        txtSaldo.setEditable(false);
+        txtSaldo.setBackground(new java.awt.Color(235, 240, 248));
+        add(txtSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 160, 200, 30));
+
+        txtFinal.setEditable(false);
+        txtFinal.setBackground(new java.awt.Color(235, 240, 248));
+        add(txtFinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 210, 200, 30));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
@@ -119,6 +124,7 @@ public class PnlEstadistica extends javax.swing.JPanel {
     private javax.swing.JTextField txtEgresos;
     private javax.swing.JTextField txtFinal;
     private javax.swing.JTextField txtIngresos;
+    private javax.swing.JLabel txtMensaje;
     private javax.swing.JTextField txtMes;
     private javax.swing.JLabel txtResultado;
     private javax.swing.JTextField txtSaldo;

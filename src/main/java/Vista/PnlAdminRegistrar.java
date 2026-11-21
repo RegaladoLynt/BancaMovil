@@ -79,6 +79,7 @@ public class PnlAdminRegistrar extends javax.swing.JPanel {
         jTextField2.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
         jTextField2.setForeground(new java.awt.Color(39, 50, 74));
         jTextField2.setToolTipText("");
+        jTextField2.addActionListener(this::jTextField2ActionPerformed);
         add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 240, 40));
 
         text2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -153,6 +154,10 @@ public class PnlAdminRegistrar extends javax.swing.JPanel {
         btnCancelar.setText("CANCELAR");
         add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 290, 160, 40));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
