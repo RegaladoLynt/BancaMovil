@@ -52,6 +52,7 @@ public class PnlAdminInfo extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(800, 360));
         setMinimumSize(new java.awt.Dimension(800, 360));
+        setPreferredSize(new java.awt.Dimension(800, 360));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(27, 42, 74));

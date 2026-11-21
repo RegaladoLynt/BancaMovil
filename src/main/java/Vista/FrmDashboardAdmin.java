@@ -74,6 +74,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         Navegation.add(btnInfo);
         btnInfo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnInfo.setForeground(new java.awt.Color(255, 255, 255));
+        btnInfo.setSelected(true);
         btnInfo.setText("Información");
         btnInfo.addActionListener(this::btnInfoActionPerformed);
         jPanel1.add(btnInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 110, 162, 30));
