@@ -39,20 +39,26 @@ public class AdminCreditoControlador extends BaseControlador {
     private void evaluarCliente() {
         int puntuales = 0, atrasadas = 0, porPagar = 0;
         int dia1 = 0, dia3 = 0, dia7Mas = 0;
-        double ingresosTotales = 0;
+        double ingresoPromedioMensual = 0;
 
         Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
 
-        String sqlIng = "SELECT COALESCE(SUM(monto), 0) FROM transacciones WHERE id_usuario = ? AND (tipo LIKE '%DEPOSITO%' OR tipo LIKE '%RECIBIDA%' OR tipo LIKE '%DESEMBOLSO%')";
+        // 1. Calcular ingreso promedio mensual real del cliente (no la suma inflada de todo el año)
+        String sqlIng = "SELECT COALESCE(SUM(monto), 0) AS total, " +
+                        "GREATEST(1, COUNT(DISTINCT DATE_FORMAT(fecha_transaccion, '%Y-%m'))) AS meses " +
+                        "FROM transacciones WHERE id_usuario = ? AND tipo IN ('DEPOSITO', 'TRANSFERENCIA_RECIBIDA')";
         try (PreparedStatement ps = cn.prepareStatement(sqlIng)) {
             ps.setInt(1, cliente.getIdUsuario());
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) ingresosTotales = rs.getDouble(1);
+                if (rs.next()) {
+                    ingresoPromedioMensual = rs.getDouble("total") / rs.getInt("meses");
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error ingresos crédito: " + e.getMessage());
         }
 
+        // 2. Consultar historial de cuotas del cliente
         String sqlCuotas = "SELECT c.estado, c.fecha_vencimiento, c.fecha_pago FROM cuotas c " +
                            "INNER JOIN creditos cr ON c.id_credito = cr.id_credito WHERE cr.id_usuario = ?";
         try (PreparedStatement ps = cn.prepareStatement(sqlCuotas)) {
@@ -121,23 +127,31 @@ public class AdminCreditoControlador extends BaseControlador {
             }
         }
 
-        double baseCapacidad = Math.max(ingresosTotales, cliente.getSaldo());
+        // 3. Cálculo realista de Riesgo y Crédito Sugerido
+        double saldoActual = Math.max(0, cliente.getSaldo());
         String riesgo;
         double creditoSugerido;
 
         if (atrasadas >= 2 || dia7Mas > 0) {
+            // Riesgo ALTO: microcrédito cauteloso (40% de su saldo actual, tope conservador)
             riesgo = "ALTO";
-            creditoSugerido = Math.max(300.0, baseCapacidad * 0.40);
+            creditoSugerido = Math.max(200.0, saldoActual * 0.40);
             vista.txtRiesgo.setForeground(new Color(192, 57, 43));
-        } else if (atrasadas == 1 || baseCapacidad < 800) {
+        } else if (atrasadas == 1 || ingresoPromedioMensual < 1300) {
+            // Riesgo MEDIO: hasta el 70% de su ingreso promedio mensual o saldo
             riesgo = "MEDIO";
-            creditoSugerido = Math.max(800.0, baseCapacidad * 0.80);
+            double base = Math.max(saldoActual, ingresoPromedioMensual);
+            creditoSugerido = Math.max(500.0, base * 0.70);
             vista.txtRiesgo.setForeground(new Color(184, 134, 11));
         } else {
+            // Riesgo BAJO: cliente puntual -> hasta 1.5x su ingreso mensual + 30% de saldo
             riesgo = "BAJO";
-            creditoSugerido = Math.max(1500.0, baseCapacidad * 1.50);
+            creditoSugerido = Math.max(1000.0, (ingresoPromedioMensual * 1.50) + (saldoActual * 0.30));
             vista.txtRiesgo.setForeground(new Color(30, 132, 73));
         }
+
+        // Redondear a múltiplos de 50 soles para que parezca una oferta bancaria real
+        creditoSugerido = Math.round(creditoSugerido / 50.0) * 50.0;
 
         vista.txtRiesgo.setText(riesgo);
         vista.txtCredito.setText(String.format("%.2f", creditoSugerido));
