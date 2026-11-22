@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
@@ -46,12 +48,17 @@ public class AdminEstadisticaControlador extends BaseControlador {
         StringTokenizer st = new StringTokenizer(mesAnio, "/");
         int mes = Integer.parseInt(st.nextToken());
         int anio = Integer.parseInt(st.nextToken());
+        LocalDate finDeMes = YearMonth.of(anio, mes).atEndOfMonth();
 
         double ingresos = 0;
         double egresos = 0;
-        String sql = "SELECT tipo, monto FROM transacciones WHERE id_usuario = ? AND MONTH(fecha_transaccion) = ? AND YEAR(fecha_transaccion) = ?";
+        double saldoCierreMes = 0;
+
         Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+
+        // 1. Ingresos y egresos únicamente del mes consultado
+        String sqlMes = "SELECT tipo, monto FROM transacciones WHERE id_usuario = ? AND MONTH(fecha_transaccion) = ? AND YEAR(fecha_transaccion) = ?";
+        try (PreparedStatement ps = cn.prepareStatement(sqlMes)) {
             ps.setInt(1, cliente.getIdUsuario());
             ps.setInt(2, mes);
             ps.setInt(3, anio);
@@ -70,10 +77,30 @@ public class AdminEstadisticaControlador extends BaseControlador {
             System.out.println("Error balance mensual: " + ex.getMessage());
         }
 
+        // 2. Saldo real acumulado con el que terminó ese mes (hasta el último día del mes)
+        String sqlAcum = "SELECT tipo, monto FROM transacciones WHERE id_usuario = ? AND fecha_transaccion <= ?";
+        try (PreparedStatement ps = cn.prepareStatement(sqlAcum)) {
+            ps.setInt(1, cliente.getIdUsuario());
+            ps.setDate(2, java.sql.Date.valueOf(finDeMes));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String tipo = rs.getString("tipo");
+                    double monto = rs.getDouble("monto");
+                    if (tipo.contains("DEPOSITO") || tipo.contains("RECIBIDA") || tipo.contains("DESEMBOLSO")) {
+                        saldoCierreMes += monto;
+                    } else {
+                        saldoCierreMes -= monto;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error saldo cierre de mes: " + ex.getMessage());
+        }
+
         double diferencia = ingresos - egresos;
         pnl.txtIngresos.setText(String.format("S/. %.2f", ingresos));
         pnl.txtEgresos.setText(String.format("S/. %.2f", egresos));
-        pnl.txtSaldo.setText(String.format("S/. %.2f", cliente.getSaldo()));
+        pnl.txtSaldo.setText(String.format("S/. %.2f", saldoCierreMes));
 
         if (diferencia >= 0) {
             pnl.txtResultado.setText("Ganancia:");
