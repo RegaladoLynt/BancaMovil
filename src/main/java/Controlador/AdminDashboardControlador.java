@@ -31,7 +31,6 @@ public class AdminDashboardControlador extends BaseControlador {
         vista.btnCerrarSesion.addActionListener(e -> cerrarSesion());
         vista.btnBuscarDni.addActionListener(e -> buscarCliente());
 
-        // Navegación polimórfica en una sola línea por botón
         vista.btnInfo.addActionListener(e -> navegarA(vista.btnInfo, new VistasAdminFactory.VistaInfo()));
         vista.btnHistorial.addActionListener(e -> navegarA(vista.btnHistorial, new VistasAdminFactory.VistaHistorial()));
         vista.btnCredito.addActionListener(e -> navegarA(vista.btnCredito, new VistasAdminFactory.VistaCredito()));
@@ -41,7 +40,6 @@ public class AdminDashboardControlador extends BaseControlador {
         abrirPestanaInfo();
     }
 
-    // Método polimórfico central: reemplaza a los 5 métodos anteriores
     public void navegarA(JToggleButton botonActivo, VistaAdmin estrategiaVista) {
         EstiloUI.aplicarEstiloPestanas(botonActivo,
                 vista.btnInfo, vista.btnHistorial, vista.btnCredito, vista.btnAtencionCliente, vista.Notificaciones);
@@ -81,6 +79,7 @@ public class AdminDashboardControlador extends BaseControlador {
         vista.dispose();
     }
 
+    public FrmDashboardAdmin getVista() { return vista; }
     public Usuario getClienteActual() { return clienteActual; }
     public void setClienteActual(Usuario clienteActual) { this.clienteActual = clienteActual; }
 }
