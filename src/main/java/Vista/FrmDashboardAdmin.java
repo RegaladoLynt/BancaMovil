@@ -50,6 +50,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(244, 246, 249));
+        jPanel1.setPreferredSize(new java.awt.Dimension(800, 500));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtInfoAdmin.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
