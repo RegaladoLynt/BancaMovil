@@ -3,6 +3,7 @@ package Vista;
 import Conexion.SesionSistema;
 import Controlador.AuthControlador;
 import Controlador.ClienteControlador;
+import Controlador.LoginControlador;
 import Modelo.Cuenta;
 import Procesos.ProcesoVista;
 import java.awt.CardLayout;
@@ -143,7 +144,9 @@ public class FrmDashboardCliente extends JFrame {
     private void cerrarSesion() {
         auth.cerrarSesion();
         dispose();
-        new FrmLogin().setVisible(true);
+        FrmLogin login = new FrmLogin();
+        new LoginControlador(login);
+        login.setVisible(true);
     }
 
     public static void main(String[] args) {

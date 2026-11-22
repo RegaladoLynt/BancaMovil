@@ -63,42 +63,53 @@ public class AuthControlador extends BaseControlador {
 
     public List<String> verificarAlertasVencimientoAlIngresar(LocalDate fechaSimulada, Integer idUsuarioFiltro) {
         List<String> alertas = new ArrayList<>();
+        boolean esVistaCliente = (idUsuarioFiltro != null);
+
         String sql = "SELECT u.id_usuario, CONCAT(u.nombres, ' ', u.apellidos) AS cliente, " +
                      "c.numero_cuota, c.monto_cuota, c.fecha_vencimiento " +
                      "FROM cuotas c " +
                      "INNER JOIN creditos cr ON c.id_credito = cr.id_credito " +
                      "INNER JOIN usuarios u ON cr.id_usuario = u.id_usuario " +
                      "WHERE c.estado = 'POR_PAGAR' " +
-                     (idUsuarioFiltro != null ? "AND u.id_usuario = ? " : "");
+                     (esVistaCliente ? "AND u.id_usuario = ? " : "");
 
         Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
         try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            if (idUsuarioFiltro != null) {
+            if (esVistaCliente) {
                 ps.setInt(1, idUsuarioFiltro);
             }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     LocalDate venc = rs.getDate("fecha_vencimiento").toLocalDate();
                     long dias = ChronoUnit.DAYS.between(fechaSimulada, venc);
+                    String nombreCliente = rs.getString("cliente");
+                    int numCuota = rs.getInt("numero_cuota");
+                    double monto = rs.getDouble("monto_cuota");
 
                     AlertaVencimiento alerta = AlertaVencimiento.crearSegunDias(
-                            dias, rs.getString("cliente"), rs.getInt("numero_cuota"), rs.getDouble("monto_cuota"), venc
+                            dias, nombreCliente, numCuota, monto, venc
                     );
 
                     if (alerta != null) {
-                        String msg = alerta.generarMensaje();
-                        alertas.add(msg);
+                        // Mensaje en tercera persona para la bandeja del Admin
+                        String msgAdmin = alerta.generarMensaje();
+
+                        // Mensaje directo al Cliente si quien inicia sesión es el Cliente
+                        String msgMostrar = esVistaCliente
+                                ? formatearMensajeParaCliente(dias, numCuota, monto, venc)
+                                : msgAdmin;
+                        alertas.add(msgMostrar);
 
                         String sqlCheck = "SELECT COUNT(*) FROM notificaciones WHERE mensaje = ? AND fecha_notificacion = ?";
                         try (PreparedStatement psCheck = cn.prepareStatement(sqlCheck)) {
-                            psCheck.setString(1, msg);
+                            psCheck.setString(1, msgAdmin);
                             psCheck.setDate(2, Date.valueOf(fechaSimulada));
                             try (ResultSet rsCheck = psCheck.executeQuery()) {
                                 if (rsCheck.next() && rsCheck.getInt(1) == 0) {
                                     String sqlIns = "INSERT INTO notificaciones (id_usuario_origen, mensaje, fecha_notificacion, leida) VALUES (?, ?, ?, FALSE)";
                                     try (PreparedStatement psIns = cn.prepareStatement(sqlIns)) {
                                         psIns.setInt(1, rs.getInt("id_usuario"));
-                                        psIns.setString(2, msg);
+                                        psIns.setString(2, msgAdmin);
                                         psIns.setDate(3, Date.valueOf(fechaSimulada));
                                         psIns.executeUpdate();
                                     }
@@ -112,5 +123,18 @@ public class AuthControlador extends BaseControlador {
             System.out.println("Error verificando alertas: " + e.getMessage());
         }
         return alertas;
+    }
+
+    private String formatearMensajeParaCliente(long dias, int numCuota, double monto, LocalDate venc) {
+        String montoFmt = String.format("S/. %.2f", monto);
+        if (dias < 0) {
+            return "[CUOTA VENCIDA] Tienes la cuota #" + numCuota + " (" + montoFmt + ") vencida hace " + Math.abs(dias) + " día(s).";
+        } else if (dias == 0) {
+            return "[VENCE HOY] ¡Recuerda! Hoy vence tu cuota #" + numCuota + " (" + montoFmt + ").";
+        } else if (dias == 1) {
+            return "[VENCE MAÑANA] Tu cuota #" + numCuota + " (" + montoFmt + ") vence mañana (" + venc + ").";
+        } else {
+            return "[PRÓXIMO VENCIMIENTO] Tu cuota #" + numCuota + " (" + montoFmt + ") vence en " + dias + " días (" + venc + ").";
+        }
     }
 }
