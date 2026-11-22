@@ -29,7 +29,7 @@ public class FrmLogin extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        lblFechaMinima = new javax.swing.JLabel();
+        txtFechamin = new javax.swing.JLabel();
         BIENVENID1 = new javax.swing.JLabel();
         BIENVENIDA2 = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
@@ -38,6 +38,7 @@ public class FrmLogin extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         txtPassword = new javax.swing.JPasswordField();
+        txtFechaMinima1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -45,10 +46,10 @@ public class FrmLogin extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(244, 246, 249));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblFechaMinima.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblFechaMinima.setText("Fecha minima es");
-        lblFechaMinima.setToolTipText("");
-        jPanel1.add(lblFechaMinima, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 250, -1, -1));
+        txtFechamin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtFechamin.setText("12/12/2012");
+        txtFechamin.setToolTipText("");
+        jPanel1.add(txtFechamin, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 250, 120, 30));
 
         BIENVENID1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         BIENVENID1.setText("BANCA DIGITAL");
@@ -60,12 +61,12 @@ public class FrmLogin extends javax.swing.JFrame {
 
         txtUsuario.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtUsuario.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Usuario", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 2, 14), new java.awt.Color(30, 30, 30))); // NOI18N
-        jPanel1.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, 390, 50));
+        jPanel1.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, 410, 50));
 
         txtFecha.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtFecha.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Fecha", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 2, 14), new java.awt.Color(30, 30, 30))); // NOI18N
         txtFecha.addActionListener(this::txtFechaActionPerformed);
-        jPanel1.add(txtFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, 210, 60));
+        jPanel1.add(txtFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, 160, 60));
 
         btnIngresar.setBackground(new java.awt.Color(184, 134, 11));
         btnIngresar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -92,12 +93,17 @@ public class FrmLogin extends javax.swing.JFrame {
             .addGap(0, 410, Short.MAX_VALUE)
         );
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 0, 50, 410));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 0, 50, 410));
 
         txtPassword.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Contraseña", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 2, 14))); // NOI18N
-        jPanel1.add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, 390, 60));
+        jPanel1.add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, 410, 60));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 560, 410));
+        txtFechaMinima1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtFechaMinima1.setText("Fecha minima es");
+        txtFechaMinima1.setToolTipText("");
+        jPanel1.add(txtFechaMinima1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 250, -1, 30));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 570, 410));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -134,13 +140,14 @@ public class FrmLogin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel BIENVENID1;
     private javax.swing.JLabel BIENVENIDA2;
-    private javax.swing.JButton btnIngresar;
-    private javax.swing.JButton btnSalir;
+    public javax.swing.JButton btnIngresar;
+    public javax.swing.JButton btnSalir;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JLabel lblFechaMinima;
-    private javax.swing.JTextField txtFecha;
-    private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtUsuario;
+    public javax.swing.JTextField txtFecha;
+    private javax.swing.JLabel txtFechaMinima1;
+    public javax.swing.JLabel txtFechamin;
+    public javax.swing.JPasswordField txtPassword;
+    public javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,6 +1,8 @@
 package Vista;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 public class EstiloUI {
@@ -23,5 +25,13 @@ public class EstiloUI {
                 btn.setForeground(Color.WHITE);
             }
         }
+    }
+
+    public static void cambiarVista(JPanel contenedor, JPanel nuevaVista) {
+        contenedor.setLayout(new BorderLayout());
+        contenedor.removeAll();
+        contenedor.add(nuevaVista, BorderLayout.CENTER);
+        contenedor.revalidate();
+        contenedor.repaint();
     }
 }

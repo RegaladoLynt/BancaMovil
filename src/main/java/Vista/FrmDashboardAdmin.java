@@ -44,6 +44,9 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         pnlContenido = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(800, 500));
+        setMinimumSize(new java.awt.Dimension(800, 500));
+        setPreferredSize(new java.awt.Dimension(800, 500));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(244, 246, 249));
@@ -62,7 +65,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         btnCerrarSesion.setBackground(new java.awt.Color(180, 45, 55));
         btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrarSesion.setText("CERRAR SESION");
-        jPanel1.add(btnCerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 10, 120, 30));
+        jPanel1.add(btnCerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 10, 170, 30));
         jPanel1.add(txtBuscarDni, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 200, 30));
 
         btnBuscarDni.setBackground(new java.awt.Color(184, 134, 11));
@@ -170,18 +173,18 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup Navegation;
-    private javax.swing.JToggleButton Notificaciones;
-    private javax.swing.JToggleButton btnAtencionCliente;
-    private javax.swing.JButton btnBuscarDni;
-    private javax.swing.JButton btnCerrarSesion;
-    private javax.swing.JToggleButton btnCredito;
-    private javax.swing.JToggleButton btnHistorial;
-    private javax.swing.JToggleButton btnInfo;
+    public javax.swing.JToggleButton Notificaciones;
+    public javax.swing.JToggleButton btnAtencionCliente;
+    public javax.swing.JButton btnBuscarDni;
+    public javax.swing.JButton btnCerrarSesion;
+    public javax.swing.JToggleButton btnCredito;
+    public javax.swing.JToggleButton btnHistorial;
+    public javax.swing.JToggleButton btnInfo;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel pnlContenido;
-    private javax.swing.JTextField txtBuscarDni;
-    private javax.swing.JLabel txtFecha;
-    private javax.swing.JLabel txtInfoAdmin;
+    public javax.swing.JPanel pnlContenido;
+    public javax.swing.JTextField txtBuscarDni;
+    public javax.swing.JLabel txtFecha;
+    public javax.swing.JLabel txtInfoAdmin;
     // End of variables declaration//GEN-END:variables
 }

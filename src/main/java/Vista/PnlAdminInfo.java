@@ -72,7 +72,7 @@ public class PnlAdminInfo extends javax.swing.JPanel {
 
         lblNombreCompleto.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblNombreCompleto.setText("Nombre");
-        add(lblNombreCompleto, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, 80, 40));
+        add(lblNombreCompleto, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, 650, 40));
 
         text2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text2.setText("DNI:");
@@ -80,7 +80,7 @@ public class PnlAdminInfo extends javax.swing.JPanel {
 
         lblDniCliente.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblDniCliente.setText("DNI");
-        add(lblDniCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 80, 40));
+        add(lblDniCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 650, 40));
 
         text3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text3.setText("Celular:");
@@ -88,7 +88,7 @@ public class PnlAdminInfo extends javax.swing.JPanel {
 
         lblCelularCliente.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblCelularCliente.setText("Celular");
-        add(lblCelularCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, 80, 40));
+        add(lblCelularCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, 650, 40));
 
         jPanel3.setBackground(new java.awt.Color(27, 42, 74));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -107,7 +107,7 @@ public class PnlAdminInfo extends javax.swing.JPanel {
 
         lblNumeroCuenta.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblNumeroCuenta.setText("Cuenta");
-        add(lblNumeroCuenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 230, 80, 40));
+        add(lblNumeroCuenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 230, 180, 40));
 
         text5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text5.setText("Saldo:");
@@ -116,7 +116,7 @@ public class PnlAdminInfo extends javax.swing.JPanel {
         lblSaldoActual.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblSaldoActual.setForeground(new java.awt.Color(184, 134, 11));
         lblSaldoActual.setText("Saldo");
-        add(lblSaldoActual, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 270, 80, 40));
+        add(lblSaldoActual, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 270, 180, 40));
 
         text6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text6.setText("Estado:");
@@ -125,12 +125,12 @@ public class PnlAdminInfo extends javax.swing.JPanel {
         lblEstadoCliente.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblEstadoCliente.setForeground(new java.awt.Color(184, 134, 11));
         lblEstadoCliente.setText("Estado");
-        add(lblEstadoCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 310, 80, 40));
+        add(lblEstadoCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 310, 180, 40));
 
         text7.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text7.setText("Deposito:");
-        add(text7, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 250, -1, 40));
-        add(txtDepositar, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 250, 190, 40));
+        add(text7, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 250, -1, 40));
+        add(txtDepositar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 250, 230, 40));
 
         btnDepositar.setBackground(new java.awt.Color(184, 134, 11));
         btnDepositar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -140,8 +140,8 @@ public class PnlAdminInfo extends javax.swing.JPanel {
 
         text8.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text8.setText("Retiro:");
-        add(text8, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 300, -1, 40));
-        add(txtRetiro, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 300, 190, 40));
+        add(text8, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 300, -1, 40));
+        add(txtRetiro, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 300, 230, 40));
 
         btnRetiro.setBackground(new java.awt.Color(27, 42, 74));
         btnRetiro.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -152,16 +152,16 @@ public class PnlAdminInfo extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnDepositar;
-    private javax.swing.JButton btnRetiro;
+    public javax.swing.JButton btnDepositar;
+    public javax.swing.JButton btnRetiro;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel lblCelularCliente;
-    private javax.swing.JLabel lblDniCliente;
-    private javax.swing.JLabel lblEstadoCliente;
-    private javax.swing.JLabel lblNombreCompleto;
-    private javax.swing.JLabel lblNumeroCuenta;
-    private javax.swing.JLabel lblSaldoActual;
+    public javax.swing.JLabel lblCelularCliente;
+    public javax.swing.JLabel lblDniCliente;
+    public javax.swing.JLabel lblEstadoCliente;
+    public javax.swing.JLabel lblNombreCompleto;
+    public javax.swing.JLabel lblNumeroCuenta;
+    public javax.swing.JLabel lblSaldoActual;
     private javax.swing.JLabel text1;
     private javax.swing.JLabel text2;
     private javax.swing.JLabel text3;
@@ -170,8 +170,8 @@ public class PnlAdminInfo extends javax.swing.JPanel {
     private javax.swing.JLabel text6;
     private javax.swing.JLabel text7;
     private javax.swing.JLabel text8;
-    private javax.swing.JTextField txtDepositar;
-    private javax.swing.JTextField txtRetiro;
+    public javax.swing.JTextField txtDepositar;
+    public javax.swing.JTextField txtRetiro;
     private javax.swing.JLabel txtTitulo1;
     private javax.swing.JLabel txtTitulo2;
     // End of variables declaration//GEN-END:variables

@@ -30,19 +30,19 @@ public class PnlAdminRegistrar extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         txtTitulo3 = new javax.swing.JLabel();
         text1 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtRegDni = new javax.swing.JTextField();
         text2 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtRegNombres = new javax.swing.JTextField();
         text3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtRegApellidos = new javax.swing.JTextField();
         text4 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtRegCelular = new javax.swing.JTextField();
         text5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtRegUsuario = new javax.swing.JTextField();
         text6 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
+        txtRegPassword = new javax.swing.JTextField();
         text7 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtRegSaldo = new javax.swing.JTextField();
         btnRegistrar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
@@ -74,73 +74,73 @@ public class PnlAdminRegistrar extends javax.swing.JPanel {
         text1.setText("DNI:");
         add(text1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 110, 40));
 
-        jTextField2.setEditable(false);
-        jTextField2.setBackground(new java.awt.Color(235, 240, 248));
-        jTextField2.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
-        jTextField2.setForeground(new java.awt.Color(39, 50, 74));
-        jTextField2.setToolTipText("");
-        jTextField2.addActionListener(this::jTextField2ActionPerformed);
-        add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 240, 40));
+        txtRegDni.setEditable(false);
+        txtRegDni.setBackground(new java.awt.Color(235, 240, 248));
+        txtRegDni.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
+        txtRegDni.setForeground(new java.awt.Color(39, 50, 74));
+        txtRegDni.setToolTipText("");
+        txtRegDni.addActionListener(this::txtRegDniActionPerformed);
+        add(txtRegDni, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 240, 40));
 
         text2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text2.setText("Nombres:");
         add(text2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 110, 40));
 
-        jTextField3.setBackground(new java.awt.Color(235, 240, 248));
-        jTextField3.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
-        jTextField3.setForeground(new java.awt.Color(39, 50, 74));
-        jTextField3.setToolTipText("");
-        add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 150, 240, 40));
+        txtRegNombres.setBackground(new java.awt.Color(235, 240, 248));
+        txtRegNombres.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
+        txtRegNombres.setForeground(new java.awt.Color(39, 50, 74));
+        txtRegNombres.setToolTipText("");
+        add(txtRegNombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 150, 240, 40));
 
         text3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text3.setText("Apellidos:");
         add(text3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 110, 40));
 
-        jTextField1.setBackground(new java.awt.Color(235, 240, 248));
-        jTextField1.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
-        jTextField1.setForeground(new java.awt.Color(39, 50, 74));
-        jTextField1.setToolTipText("");
-        add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 220, 240, 40));
+        txtRegApellidos.setBackground(new java.awt.Color(235, 240, 248));
+        txtRegApellidos.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
+        txtRegApellidos.setForeground(new java.awt.Color(39, 50, 74));
+        txtRegApellidos.setToolTipText("");
+        add(txtRegApellidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 220, 240, 40));
 
         text4.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text4.setText("Celular:");
         add(text4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 110, 40));
 
-        jTextField5.setBackground(new java.awt.Color(235, 240, 248));
-        jTextField5.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
-        jTextField5.setForeground(new java.awt.Color(39, 50, 74));
-        jTextField5.setToolTipText("");
-        add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 290, 240, 40));
+        txtRegCelular.setBackground(new java.awt.Color(235, 240, 248));
+        txtRegCelular.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
+        txtRegCelular.setForeground(new java.awt.Color(39, 50, 74));
+        txtRegCelular.setToolTipText("");
+        add(txtRegCelular, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 290, 240, 40));
 
         text5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text5.setText("Usuario:");
         add(text5, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 80, 110, 40));
 
-        jTextField4.setBackground(new java.awt.Color(235, 240, 248));
-        jTextField4.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
-        jTextField4.setForeground(new java.awt.Color(39, 50, 74));
-        jTextField4.setToolTipText("");
-        add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 80, 240, 40));
+        txtRegUsuario.setBackground(new java.awt.Color(235, 240, 248));
+        txtRegUsuario.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
+        txtRegUsuario.setForeground(new java.awt.Color(39, 50, 74));
+        txtRegUsuario.setToolTipText("");
+        add(txtRegUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 80, 240, 40));
 
         text6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text6.setText("Contraseña:");
         add(text6, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 150, 110, 40));
 
-        jTextField7.setBackground(new java.awt.Color(235, 240, 248));
-        jTextField7.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
-        jTextField7.setForeground(new java.awt.Color(39, 50, 74));
-        jTextField7.setToolTipText("");
-        add(jTextField7, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 150, 240, 40));
+        txtRegPassword.setBackground(new java.awt.Color(235, 240, 248));
+        txtRegPassword.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
+        txtRegPassword.setForeground(new java.awt.Color(39, 50, 74));
+        txtRegPassword.setToolTipText("");
+        add(txtRegPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 150, 240, 40));
 
         text7.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         text7.setText("Saldo:");
         add(text7, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 220, 110, 40));
 
-        jTextField6.setBackground(new java.awt.Color(235, 240, 248));
-        jTextField6.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
-        jTextField6.setForeground(new java.awt.Color(39, 50, 74));
-        jTextField6.setToolTipText("");
-        add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 220, 240, 40));
+        txtRegSaldo.setBackground(new java.awt.Color(235, 240, 248));
+        txtRegSaldo.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
+        txtRegSaldo.setForeground(new java.awt.Color(39, 50, 74));
+        txtRegSaldo.setToolTipText("");
+        add(txtRegSaldo, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 220, 240, 40));
 
         btnRegistrar.setBackground(new java.awt.Color(184, 134, 11));
         btnRegistrar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -155,22 +155,15 @@ public class PnlAdminRegistrar extends javax.swing.JPanel {
         add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 290, 160, 40));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtRegDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRegDniActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txtRegDniActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnRegistrar;
+    public javax.swing.JButton btnCancelar;
+    public javax.swing.JButton btnRegistrar;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
     private javax.swing.JLabel text1;
     private javax.swing.JLabel text2;
     private javax.swing.JLabel text3;
@@ -178,6 +171,13 @@ public class PnlAdminRegistrar extends javax.swing.JPanel {
     private javax.swing.JLabel text5;
     private javax.swing.JLabel text6;
     private javax.swing.JLabel text7;
+    public javax.swing.JTextField txtRegApellidos;
+    public javax.swing.JTextField txtRegCelular;
+    public javax.swing.JTextField txtRegDni;
+    public javax.swing.JTextField txtRegNombres;
+    public javax.swing.JTextField txtRegPassword;
+    public javax.swing.JTextField txtRegSaldo;
+    public javax.swing.JTextField txtRegUsuario;
     private javax.swing.JLabel txtTitulo1;
     private javax.swing.JLabel txtTitulo3;
     // End of variables declaration//GEN-END:variables

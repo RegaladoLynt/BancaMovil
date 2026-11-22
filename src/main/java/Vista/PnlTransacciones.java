@@ -128,18 +128,18 @@ public class PnlTransacciones extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnConsultar;
+    public javax.swing.JButton btnConsultar;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblTransferencias;
+    public javax.swing.JTable tblTransferencias;
     private javax.swing.JLabel text1;
     private javax.swing.JLabel text2;
     private javax.swing.JLabel text3;
     private javax.swing.JLabel text4;
     private javax.swing.JLabel text5;
-    private javax.swing.JTextField txtDetail;
-    private javax.swing.JTextField txtFechaTrans;
-    private javax.swing.JTextField txtIdRegistro;
-    private javax.swing.JTextField txtMonto;
-    private javax.swing.JTextField txtOp;
+    public javax.swing.JTextField txtDetail;
+    public javax.swing.JTextField txtFechaTrans;
+    public javax.swing.JTextField txtIdRegistro;
+    public javax.swing.JTextField txtMonto;
+    public javax.swing.JTextField txtOp;
     // End of variables declaration//GEN-END:variables
 }

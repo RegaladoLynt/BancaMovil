@@ -33,16 +33,16 @@ public class PnlAdminCredito extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         txtTitulo5 = new javax.swing.JLabel();
         pnlGraficoPastel = new javax.swing.JPanel();
-        lblLeyendaPastel = new javax.swing.JLabel();
-        lblResultadoPastel = new javax.swing.JLabel();
         pnlGraficoBarras = new javax.swing.JPanel();
-        lblLeyendaBarra = new javax.swing.JLabel();
-        lblResultadoBarra = new javax.swing.JLabel();
         txt1 = new javax.swing.JLabel();
         txt2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnOfrecerCredito = new javax.swing.JButton();
         txtRiesgo = new javax.swing.JTextField();
-        txtRiesgo1 = new javax.swing.JTextField();
+        txtCredito = new javax.swing.JTextField();
+        lblLeyendaPastel = new javax.swing.JLabel();
+        lblResultadoPastel = new javax.swing.JLabel();
+        lblLeyendaBarra = new javax.swing.JLabel();
+        lblResultadoBarra = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(800, 360));
@@ -84,26 +84,12 @@ public class PnlAdminCredito extends javax.swing.JPanel {
 
         pnlGraficoPastel.setMinimumSize(new java.awt.Dimension(300, 300));
         pnlGraficoPastel.setPreferredSize(new java.awt.Dimension(300, 300));
-        pnlGraficoPastel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblLeyendaPastel.setText("Pastel leyenda");
-        pnlGraficoPastel.add(lblLeyendaPastel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
-
-        lblResultadoPastel.setText("Resultado pastel");
-        pnlGraficoPastel.add(lblResultadoPastel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, -1, -1));
-
-        add(pnlGraficoPastel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 360, 240));
+        pnlGraficoPastel.setLayout(new java.awt.BorderLayout());
+        add(pnlGraficoPastel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 360, 200));
 
         pnlGraficoBarras.setMinimumSize(new java.awt.Dimension(300, 300));
-        pnlGraficoBarras.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblLeyendaBarra.setText("Barra Leyenda");
-        pnlGraficoBarras.add(lblLeyendaBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, 20));
-
-        lblResultadoBarra.setText("Resultado Barra");
-        pnlGraficoBarras.add(lblResultadoBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, -1, -1));
-
-        add(pnlGraficoBarras, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 70, 360, 240));
+        pnlGraficoBarras.setLayout(new java.awt.BorderLayout());
+        add(pnlGraficoBarras, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 70, 360, 200));
 
         txt1.setBackground(new java.awt.Color(27, 42, 74));
         txt1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -115,38 +101,50 @@ public class PnlAdminCredito extends javax.swing.JPanel {
         txt2.setText("Credito aceptable:");
         add(txt2, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 320, 170, 30));
 
-        jButton1.setBackground(new java.awt.Color(184, 134, 11));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("OFRECER");
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 320, -1, 30));
+        btnOfrecerCredito.setBackground(new java.awt.Color(184, 134, 11));
+        btnOfrecerCredito.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnOfrecerCredito.setForeground(new java.awt.Color(255, 255, 255));
+        btnOfrecerCredito.setText("OFRECER");
+        add(btnOfrecerCredito, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 320, -1, 30));
 
+        txtRiesgo.setEditable(false);
         txtRiesgo.setBackground(new java.awt.Color(235, 240, 248));
         txtRiesgo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        add(txtRiesgo, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 320, 130, 30));
+        add(txtRiesgo, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 320, 130, 30));
 
-        txtRiesgo1.setEditable(false);
-        txtRiesgo1.setBackground(new java.awt.Color(235, 240, 248));
-        txtRiesgo1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        add(txtRiesgo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 322, 130, 30));
+        txtCredito.setBackground(new java.awt.Color(235, 240, 248));
+        txtCredito.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        add(txtCredito, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 320, 130, 30));
+
+        lblLeyendaPastel.setText("Pastel leyenda");
+        add(lblLeyendaPastel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 360, 20));
+
+        lblResultadoPastel.setText("Resultado pastel");
+        add(lblResultadoPastel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 360, -1));
+
+        lblLeyendaBarra.setText("Barra Leyenda");
+        add(lblLeyendaBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 300, 360, -1));
+
+        lblResultadoBarra.setText("Resultado Barra");
+        add(lblResultadoBarra, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 280, 360, -1));
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    public javax.swing.JButton btnOfrecerCredito;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel lblLeyendaBarra;
-    private javax.swing.JLabel lblLeyendaPastel;
-    private javax.swing.JLabel lblResultadoBarra;
-    private javax.swing.JLabel lblResultadoPastel;
-    private javax.swing.JPanel pnlGraficoBarras;
-    private javax.swing.JPanel pnlGraficoPastel;
+    public javax.swing.JLabel lblLeyendaBarra;
+    public javax.swing.JLabel lblLeyendaPastel;
+    public javax.swing.JLabel lblResultadoBarra;
+    public javax.swing.JLabel lblResultadoPastel;
+    public javax.swing.JPanel pnlGraficoBarras;
+    public javax.swing.JPanel pnlGraficoPastel;
     private javax.swing.JLabel txt1;
     private javax.swing.JLabel txt2;
-    private javax.swing.JTextField txtRiesgo;
-    private javax.swing.JTextField txtRiesgo1;
+    public javax.swing.JTextField txtCredito;
+    public javax.swing.JTextField txtRiesgo;
     private javax.swing.JLabel txtTitulo3;
     private javax.swing.JLabel txtTitulo4;
     private javax.swing.JLabel txtTitulo5;

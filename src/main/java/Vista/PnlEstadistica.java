@@ -43,6 +43,7 @@ public class PnlEstadistica extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(800, 330));
         setMinimumSize(new java.awt.Dimension(800, 330));
+        setPreferredSize(new java.awt.Dimension(800, 330));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         javax.swing.GroupLayout PnlRepresentacionLayout = new javax.swing.GroupLayout(PnlRepresentacion);
@@ -115,18 +116,18 @@ public class PnlEstadistica extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel PnlRepresentacion;
-    private javax.swing.JButton btnConsultar;
+    public javax.swing.JPanel PnlRepresentacion;
+    public javax.swing.JButton btnConsultar;
     private javax.swing.JLabel txt1;
     private javax.swing.JLabel txt2;
     private javax.swing.JLabel txt3;
     private javax.swing.JLabel txt4;
-    private javax.swing.JTextField txtEgresos;
-    private javax.swing.JTextField txtFinal;
-    private javax.swing.JTextField txtIngresos;
-    private javax.swing.JLabel txtMensaje;
-    private javax.swing.JTextField txtMes;
-    private javax.swing.JLabel txtResultado;
-    private javax.swing.JTextField txtSaldo;
+    public javax.swing.JTextField txtEgresos;
+    public javax.swing.JTextField txtFinal;
+    public javax.swing.JTextField txtIngresos;
+    public javax.swing.JLabel txtMensaje;
+    public javax.swing.JTextField txtMes;
+    public javax.swing.JLabel txtResultado;
+    public javax.swing.JTextField txtSaldo;
     // End of variables declaration//GEN-END:variables
 }

@@ -75,9 +75,9 @@ public class PnlHistorial extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel Graficas;
+    public javax.swing.JPanel Graficas;
     private javax.swing.ButtonGroup OpcionesBotones;
-    private javax.swing.JToggleButton btnIngresosMen;
-    private javax.swing.JToggleButton btnTransacciones;
+    public javax.swing.JToggleButton btnIngresosMen;
+    public javax.swing.JToggleButton btnTransacciones;
     // End of variables declaration//GEN-END:variables
 }
