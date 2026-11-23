@@ -360,3 +360,42 @@ INSERT INTO quejas_sugerencias (id_usuario, tipo, mensaje, respuesta_admin, fech
 (4, 'SUGERENCIA', 'Sería excelente recibir alertas automáticas cuando falte 1 día para el vencimiento de una cuota.', '¡Implementado! Ya activamos las alertas automáticas en tu panel de notificaciones.', '2012-12-08'),
 (5, 'QUEJA', 'Intenté pagar mi cuota tarde en la noche y el sistema me arrojó error de conexión temporal.', 'Pendiente de revisión', '2012-12-11'),
 (6, 'SUGERENCIA', 'Me gustaría poder personalizar mi límite máximo de transferencia diaria por seguridad.', 'Pendiente de revisión', '2012-12-11');
+
+USE banca_digital;
+
+CREATE TABLE IF NOT EXISTS movimientos_notificaciones (
+    id_registro INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    tipo ENUM('TRANSFERENCIA_ENVIADA', 'TRANSFERENCIA_RECIBIDA', 'PAGO_SERVICIO', 'CREDITO_SOLICITADO', 'PAGO_CUOTA', 'ALERTA_SEGURIDAD', 'DEPOSITO', 'RETIRO') NOT NULL,
+    detalle VARCHAR(200) NOT NULL,
+    monto DECIMAL(10, 2) NOT NULL,
+    fecha_operacion DATE NOT NULL,
+    visto_admin BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+INSERT INTO movimientos_notificaciones (id_usuario, tipo, detalle, monto, fecha_operacion, visto_admin)
+SELECT 
+    id_usuario,
+    CASE 
+        WHEN tipo IN ('TRANSFERENCIA_ENVIADA', 'TRANSFERENCIA_RECIBIDA', 'PAGO_SERVICIO', 'CREDITO_SOLICITADO', 'PAGO_CUOTA', 'DEPOSITO', 'RETIRO') THEN tipo
+        WHEN tipo = 'DESEMBOLSO' THEN 'CREDITO_SOLICITADO'
+        ELSE 'ALERTA_SEGURIDAD'
+    END,
+    detalle,
+    monto,
+    fecha_transaccion,
+    TRUE
+FROM transacciones;
+
+DELIMITER $$
+
+CREATE TRIGGER trg_sincronizar_a_transacciones
+AFTER INSERT ON movimientos_notificaciones
+FOR EACH ROW
+BEGIN
+    INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion)
+    VALUES (NEW.id_usuario, NEW.tipo, NEW.detalle, NEW.monto, NEW.fecha_operacion);
+END$$
+
+DELIMITER ;
