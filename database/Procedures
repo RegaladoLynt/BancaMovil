@@ -1,0 +1,328 @@
+USE banca_digital;
+
+DELIMITER $$
+
+-- 1. Registrar nuevo cliente y su cuenta bancaria
+CREATE PROCEDURE sp_registrar_cliente(
+    IN p_dni CHAR(8),
+    IN p_nombres VARCHAR(60),
+    IN p_apellidos VARCHAR(60),
+    IN p_celular CHAR(9),
+    IN p_username VARCHAR(30),
+    IN p_password VARCHAR(50),
+    IN p_numero_cuenta VARCHAR(16),
+    IN p_saldo_inicial DECIMAL(10,2),
+    IN p_fecha DATE,
+    OUT p_resultado VARCHAR(100)
+)
+BEGIN
+    DECLARE v_id_usuario INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET p_resultado = 'Error SQL: DNI o usuario duplicado.';
+    END;
+
+    START TRANSACTION;
+        INSERT INTO usuarios (dni, nombres, apellidos, celular, username, password, rol, estado)
+        VALUES (p_dni, p_nombres, p_apellidos, p_celular, p_username, p_password, 'CLIENTE', 'ACTIVO');
+
+        SET v_id_usuario = LAST_INSERT_ID();
+
+        INSERT INTO cuentas (id_usuario, numero_cuenta, tipo_cuenta, saldo, limite_diario, estado)
+        VALUES (v_id_usuario, p_numero_cuenta, 'AHORRO', p_saldo_inicial, 1500.00, 'ACTIVA');
+
+        IF p_saldo_inicial > 0 THEN
+            INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+            VALUES (v_id_usuario, 'DEPOSITO', 'Apertura de cuenta en ventanilla', p_saldo_inicial, p_fecha, TRUE);
+        END IF;
+    COMMIT;
+    SET p_resultado = 'OK';
+END$$
+
+-- 2. Operación de ventanilla (Depósito o Retiro)
+CREATE PROCEDURE sp_operar_ventanilla(
+    IN p_id_usuario INT,
+    IN p_es_deposito BOOLEAN,
+    IN p_monto DECIMAL(10,2),
+    IN p_fecha DATE,
+    OUT p_resultado VARCHAR(100),
+    OUT p_nuevo_saldo DECIMAL(10,2)
+)
+BEGIN
+    DECLARE v_saldo_actual DECIMAL(10,2);
+
+    SELECT saldo INTO v_saldo_actual FROM cuentas WHERE id_usuario = p_id_usuario FOR UPDATE;
+
+    IF v_saldo_actual IS NULL THEN
+        SET p_resultado = 'El cliente no posee una cuenta activa.';
+        SET p_nuevo_saldo = 0;
+    ELSEIF NOT p_es_deposito AND v_saldo_actual < p_monto THEN
+        SET p_resultado = 'Saldo insuficiente para realizar el retiro en ventanilla.';
+        SET p_nuevo_saldo = v_saldo_actual;
+    ELSE
+        START TRANSACTION;
+            IF p_es_deposito THEN
+                SET p_nuevo_saldo = v_saldo_actual + p_monto;
+                UPDATE cuentas SET saldo = p_nuevo_saldo WHERE id_usuario = p_id_usuario;
+                INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+                VALUES (p_id_usuario, 'DEPOSITO', 'Depósito en ventanilla bancaria', p_monto, p_fecha, TRUE);
+            ELSE
+                SET p_nuevo_saldo = v_saldo_actual - p_monto;
+                UPDATE cuentas SET saldo = p_nuevo_saldo WHERE id_usuario = p_id_usuario;
+                INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+                VALUES (p_id_usuario, 'RETIRO', 'Retiro en ventanilla bancaria', p_monto, p_fecha, TRUE);
+            END IF;
+        COMMIT;
+        SET p_resultado = 'OK';
+    END IF;
+END$$
+
+-- 3. Transferencia entre cuentas
+CREATE PROCEDURE sp_realizar_transferencia(
+    IN p_id_emisor INT,
+    IN p_cuenta_destino VARCHAR(16),
+    IN p_monto DECIMAL(10,2),
+    IN p_fecha DATE,
+    OUT p_resultado VARCHAR(120)
+)
+BEGIN
+    DECLARE v_id_receptor INT;
+    DECLARE v_cuenta_origen VARCHAR(16);
+    DECLARE v_saldo_origen DECIMAL(10,2);
+    DECLARE v_limite_diario DECIMAL(10,2);
+    DECLARE v_nombre_emisor VARCHAR(125);
+
+    SELECT c.numero_cuenta, c.saldo, c.limite_diario, CONCAT(u.nombres, ' ', u.apellidos)
+    INTO v_cuenta_origen, v_saldo_origen, v_limite_diario, v_nombre_emisor
+    FROM cuentas c INNER JOIN usuarios u ON c.id_usuario = u.id_usuario
+    WHERE c.id_usuario = p_id_emisor;
+
+    SELECT id_usuario INTO v_id_receptor FROM cuentas WHERE numero_cuenta = p_cuenta_destino AND estado = 'ACTIVA';
+
+    IF v_id_receptor IS NULL THEN
+        SET p_resultado = 'La cuenta destino no existe o está bloqueada.';
+    ELSEIF v_cuenta_origen = p_cuenta_destino THEN
+        SET p_resultado = 'No puede transferir a su misma cuenta.';
+    ELSEIF v_saldo_origen < p_monto THEN
+        SET p_resultado = 'Saldo insuficiente para realizar la transferencia.';
+    ELSE
+        START TRANSACTION;
+            UPDATE cuentas SET saldo = saldo - p_monto WHERE id_usuario = p_id_emisor;
+            UPDATE cuentas SET saldo = saldo + p_monto WHERE id_usuario = v_id_receptor;
+
+            INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+            VALUES (p_id_emisor, 'TRANSFERENCIA_ENVIADA', CONCAT('Transferencia enviada a ', p_cuenta_destino), p_monto, p_fecha, (p_monto <= v_limite_diario));
+
+            INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+            VALUES (v_id_receptor, 'TRANSFERENCIA_RECIBIDA', CONCAT('Transferencia recibida de ', v_nombre_emisor), p_monto, p_fecha, TRUE);
+
+            IF p_monto > v_limite_diario THEN
+                INSERT INTO notificaciones (id_usuario_origen, mensaje, fecha_notificacion, leida)
+                VALUES (p_id_emisor, CONCAT('[ALERTA SEGURIDAD] ', v_nombre_emisor, ' realizó transferencia inusual de S/. ', p_monto), p_fecha, FALSE);
+            END IF;
+        COMMIT;
+        SET p_resultado = 'OK';
+    END IF;
+END$$
+
+-- 4. Pago de servicios externos
+CREATE PROCEDURE sp_pagar_servicio(
+    IN p_id_usuario INT,
+    IN p_detalle VARCHAR(200),
+    IN p_monto DECIMAL(10,2),
+    IN p_fecha DATE,
+    OUT p_resultado VARCHAR(120)
+)
+BEGIN
+    DECLARE v_saldo DECIMAL(10,2);
+    SELECT saldo INTO v_saldo FROM cuentas WHERE id_usuario = p_id_usuario;
+
+    IF v_saldo < p_monto THEN
+        SET p_resultado = 'Saldo insuficiente para pagar el servicio.';
+    ELSE
+        START TRANSACTION;
+            UPDATE cuentas SET saldo = saldo - p_monto WHERE id_usuario = p_id_usuario;
+            INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+            VALUES (p_id_usuario, 'PAGO_SERVICIO', p_detalle, p_monto, p_fecha, TRUE);
+        COMMIT;
+        SET p_resultado = 'OK';
+    END IF;
+END$$
+
+DELIMITER ;
+
+USE banca_digital;
+
+DELIMITER $$
+
+-- 5. Aceptar oferta y desembolsar crédito generando cronograma en BD
+CREATE PROCEDURE sp_desembolsar_credito(
+    IN p_id_oferta INT,
+    IN p_id_usuario INT,
+    IN p_cuotas INT,
+    IN p_fecha DATE,
+    OUT p_resultado VARCHAR(120)
+)
+BEGIN
+    DECLARE v_monto DECIMAL(10,2);
+    DECLARE v_tasa DECIMAL(5,2);
+    DECLARE v_id_credito INT;
+    DECLARE v_cap_cuota DECIMAL(10,2);
+    DECLARE v_int_cuota DECIMAL(10,2);
+    DECLARE v_nombre VARCHAR(125);
+    DECLARE i INT DEFAULT 1;
+
+    SELECT monto_ofrecido, tasa_interes INTO v_monto, v_tasa
+    FROM ofertas_credito WHERE id_oferta = p_id_oferta AND id_usuario = p_id_usuario AND estado = 'PENDIENTE';
+
+    IF v_monto IS NULL THEN
+        SET p_resultado = 'La oferta ya no se encuentra disponible.';
+    ELSE
+        SELECT CONCAT(nombres, ' ', apellidos) INTO v_nombre FROM usuarios WHERE id_usuario = p_id_usuario;
+        SET v_cap_cuota = ROUND(v_monto / p_cuotas, 2);
+        SET v_int_cuota = ROUND((v_monto * (v_tasa / 100.0)) / p_cuotas, 2);
+
+        START TRANSACTION;
+            INSERT INTO creditos (id_usuario, monto_capital, tasa_interes, total_cuotas, fecha_desembolso, estado)
+            VALUES (p_id_usuario, v_monto, v_tasa, p_cuotas, p_fecha, 'ACTIVO');
+
+            SET v_id_credito = LAST_INSERT_ID();
+
+            WHILE i <= p_cuotas DO
+                INSERT INTO cuotas_credito (id_credito, numero_cuota, monto_capital, monto_interes, monto_multa, fecha_vencimiento, estado_cuota)
+                VALUES (v_id_credito, i, v_cap_cuota, v_int_cuota, 0.00, DATE_ADD(p_fecha, INTERVAL (30 * i) DAY), 'PENDIENTE');
+                SET i = i + 1;
+            END WHILE;
+
+            UPDATE ofertas_credito SET estado = 'ACEPTADA' WHERE id_oferta = p_id_oferta;
+            UPDATE cuentas SET saldo = saldo + v_monto WHERE id_usuario = p_id_usuario;
+
+            INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+            VALUES (p_id_usuario, 'DESEMBOLSO', CONCAT('Desembolso de Crédito Personal #', v_id_credito), v_monto, p_fecha, FALSE);
+
+            INSERT INTO notificaciones (id_usuario_origen, mensaje, fecha_notificacion, leida)
+            VALUES (p_id_usuario, CONCAT('[CRÉDITO DESEMBOLSADO] ', v_nombre, ' aceptó crédito de S/. ', v_monto, ' a ', p_cuotas, ' cuotas.'), p_fecha, FALSE);
+        COMMIT;
+        SET p_resultado = 'OK';
+    END IF;
+END$$
+
+-- 6. Pagar cuota de crédito (calcula descuento por adelanto o multa por atraso en BD)
+CREATE PROCEDURE sp_pagar_cuota(
+    IN p_id_cuota INT,
+    IN p_id_usuario INT,
+    IN p_fecha DATE,
+    OUT p_resultado VARCHAR(150)
+)
+BEGIN
+    DECLARE v_id_credito INT;
+    DECLARE v_num_cuota INT;
+    DECLARE v_cap DECIMAL(10,2);
+    DECLARE v_int DECIMAL(10,2);
+    DECLARE v_venc DATE;
+    DECLARE v_estado_cuota VARCHAR(20);
+    DECLARE v_dias INT;
+    DECLARE v_multa DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE v_nuevo_estado VARCHAR(20);
+    DECLARE v_total_pagar DECIMAL(10,2);
+    DECLARE v_saldo DECIMAL(10,2);
+    DECLARE v_pendientes INT;
+
+    SELECT cc.id_credito, cc.numero_cuota, cc.monto_capital, cc.monto_interes, cc.fecha_vencimiento, cc.estado_cuota
+    INTO v_id_credito, v_num_cuota, v_cap, v_int, v_venc, v_estado_cuota
+    FROM cuotas_credito cc INNER JOIN creditos cr ON cc.id_credito = cr.id_credito
+    WHERE cc.id_cuota = p_id_cuota AND cr.id_usuario = p_id_usuario;
+
+    IF v_estado_cuota IS NULL OR v_estado_cuota <> 'PENDIENTE' THEN
+        SET p_resultado = 'Esta cuota ya fue pagada anteriormente.';
+    ELSE
+        SET v_dias = DATEDIFF(p_fecha, v_venc);
+        IF v_dias < 0 THEN
+            SET v_int = ROUND(v_int * 0.50, 2);
+            SET v_dias = 0;
+            SET v_nuevo_estado = 'PAGADA_A_TIEMPO';
+        ELSEIF v_dias = 0 THEN
+            SET v_nuevo_estado = 'PAGADA_A_TIEMPO';
+        ELSE
+            SET v_multa = IF(v_dias >= 7, 35.00, IF(v_dias >= 3, 20.00, 15.00));
+            SET v_nuevo_estado = 'ATRASADA';
+        END IF;
+
+        SET v_total_pagar = v_cap + v_int + v_multa;
+        SELECT saldo INTO v_saldo FROM cuentas WHERE id_usuario = p_id_usuario;
+
+        IF v_saldo < v_total_pagar THEN
+            SET p_resultado = CONCAT('Saldo insuficiente. Total requerido: S/. ', v_total_pagar);
+        ELSE
+            START TRANSACTION;
+                UPDATE cuentas SET saldo = saldo - v_total_pagar WHERE id_usuario = p_id_usuario;
+
+                UPDATE cuotas_credito
+                SET monto_interes = v_int, monto_multa = v_multa, fecha_pago = p_fecha,
+                    dias_atraso = v_dias, estado_cuota = v_nuevo_estado
+                WHERE id_cuota = p_id_cuota;
+
+                INSERT INTO transacciones (id_usuario, tipo, detalle, monto, fecha_transaccion, visto_admin)
+                VALUES (p_id_usuario, 'PAGO_CUOTA', CONCAT('Pago Cuota #', v_num_cuota, ' - Crédito #', v_id_credito, ' (', v_nuevo_estado, ')'), v_total_pagar, p_fecha, TRUE);
+
+                SELECT COUNT(*) INTO v_pendientes FROM cuotas_credito WHERE id_credito = v_id_credito AND estado_cuota = 'PENDIENTE';
+                IF v_pendientes = 0 THEN
+                    UPDATE creditos SET estado = 'PAGADO' WHERE id_credito = v_id_credito;
+                END IF;
+            COMMIT;
+            SET p_resultado = 'OK';
+        END IF;
+    END IF;
+END$$
+
+-- 7. Sincronizar alertas del reloj del sistema hacia la tabla notificaciones (sin duplicar)
+CREATE PROCEDURE sp_sincronizar_alertas_reloj(IN p_fecha DATE)
+BEGIN
+    INSERT INTO notificaciones (id_usuario_origen, mensaje, fecha_notificacion, leida)
+    SELECT 
+        u.id_usuario,
+        CASE 
+            WHEN DATEDIFF(cc.fecha_vencimiento, p_fecha) < 0 THEN
+                CONCAT('[VENCIDA] ', u.nombres, ' ', u.apellidos, ' - Cuota #', cc.numero_cuota, ' (S/. ', (cc.monto_capital + cc.monto_interes + cc.monto_multa), ') tiene ', ABS(DATEDIFF(cc.fecha_vencimiento, p_fecha)), ' día(s) de atraso.')
+            WHEN DATEDIFF(cc.fecha_vencimiento, p_fecha) = 0 THEN
+                CONCAT('[VENCE HOY] ', u.nombres, ' ', u.apellidos, ' - Cuota #', cc.numero_cuota, ' (S/. ', (cc.monto_capital + cc.monto_interes + cc.monto_multa), ') vence HOY (', cc.fecha_vencimiento, ').')
+            ELSE
+                CONCAT('[VENCE MAÑANA] ', u.nombres, ' ', u.apellidos, ' - Cuota #', cc.numero_cuota, ' (S/. ', (cc.monto_capital + cc.monto_interes + cc.monto_multa), ') vence mañana (', cc.fecha_vencimiento, ').')
+        END AS msg,
+        p_fecha,
+        FALSE
+    FROM cuotas_credito cc
+    INNER JOIN creditos cr ON cc.id_credito = cr.id_credito
+    INNER JOIN usuarios u ON cr.id_usuario = u.id_usuario
+    WHERE cc.estado_cuota = 'PENDIENTE'
+      AND DATEDIFF(cc.fecha_vencimiento, p_fecha) <= 1
+      AND NOT EXISTS (
+          SELECT 1 FROM notificaciones n
+          WHERE n.id_usuario_origen = u.id_usuario
+            AND n.fecha_notificacion = p_fecha
+            AND n.mensaje LIKE CONCAT('%Cuota #', cc.numero_cuota, '%')
+      );
+END$$
+
+-- 8. Registrar queja/sugerencia (si es QUEJA, genera alerta automática para el Admin)
+CREATE PROCEDURE sp_registrar_atencion(
+    IN p_id_usuario INT,
+    IN p_tipo VARCHAR(15),
+    IN p_mensaje VARCHAR(300),
+    IN p_fecha DATE
+)
+BEGIN
+    DECLARE v_nombre VARCHAR(125);
+    SELECT CONCAT(nombres, ' ', apellidos) INTO v_nombre FROM usuarios WHERE id_usuario = p_id_usuario;
+
+    INSERT INTO quejas_sugerencias (id_usuario, tipo, mensaje, fecha_registro)
+    VALUES (p_id_usuario, p_tipo, p_mensaje, p_fecha);
+
+    IF p_tipo = 'QUEJA' THEN
+        INSERT INTO notificaciones (id_usuario_origen, mensaje, fecha_notificacion, leida)
+        VALUES (p_id_usuario, CONCAT('[ALERTA QUEJA] Cliente ', v_nombre, ': ', p_mensaje), p_fecha, FALSE);
+    END IF;
+END$$
+
+DELIMITER ;
