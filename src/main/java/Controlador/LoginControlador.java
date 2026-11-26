@@ -40,18 +40,12 @@ public class LoginControlador extends BaseControlador {
         if (res.startsWith("OK:")) {
             String rol = res.split(":")[1];
             if ("ADMIN".equals(rol)) {
-                List<String> alertas = authProceso.verificarAlertasVencimientoAlIngresar(getSesion().getFechaSimulada(), null);
-                if (!alertas.isEmpty()) {
-                    JOptionPane.showMessageDialog(vista,
-                            "Alertas de vencimiento detectadas (" + alertas.size() + "):\n• " + String.join("\n• ", alertas),
-                            "Reloj del Sistema - Avisos", JOptionPane.INFORMATION_MESSAGE);
-                }
                 FrmDashboardAdmin adminVista = new FrmDashboardAdmin();
                 new AdminDashboardControlador(adminVista);
                 adminVista.setVisible(true);
             } else {
                 int idCliente = getSesion().getIdUsuario();
-                List<String> alertas = authProceso.verificarAlertasVencimientoAlIngresar(getSesion().getFechaSimulada(), idCliente);
+                List<String> alertas = authProceso.obtenerAlertasClienteAlIngresar(getSesion().getFechaSimulada(), idCliente);
                 if (!alertas.isEmpty()) {
                     JOptionPane.showMessageDialog(vista,
                             "Recordatorio de Pago:\n• " + String.join("\n• ", alertas),

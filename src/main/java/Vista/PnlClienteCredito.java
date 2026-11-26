@@ -4,7 +4,6 @@ import Controlador.ClienteControlador;
 import Modelo.Credito;
 import Modelo.Cuota;
 import Modelo.OfertaCredito;
-import Procesos.ProcesoVista;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;

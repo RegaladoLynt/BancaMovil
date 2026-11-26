@@ -1,8 +1,8 @@
-package Personalizacion;
+package Fabrica;
 
 import Modelo.OfertaCredito;
 
-public class DecoradorOferta {
+public class OfertaDecorator {
 
     public static OfertaCredito decorarOfertaPorRiesgo(int idUsuario, String nivelRiesgo, double montoPersonalizado) {
         String titulo;
@@ -27,6 +27,6 @@ public class DecoradorOferta {
                 break;
         }
 
-        return new OfertaCredito(0, idUsuario, titulo, montoPersonalizado, tasa, cuotas, "DISPONIBLE");
+        return new OfertaCredito(0, idUsuario, titulo, montoPersonalizado, tasa, cuotas, "PENDIENTE");
     }
 }

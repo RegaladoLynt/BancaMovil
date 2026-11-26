@@ -1,7 +1,10 @@
-package Servicios;
+package DAO;
 
 import Conexion.BaseDatosConexion;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +16,7 @@ public abstract class BaseDAO {
     }
 
     protected Connection getCon() {
-        return BaseDatosConexion.GetInstancia().GetConectar();
+        return BaseDatosConexion.getInstancia().getConectar();
     }
 
     protected boolean ejecutarCambio(String sql, Object... params) {

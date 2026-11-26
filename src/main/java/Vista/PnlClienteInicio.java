@@ -4,7 +4,6 @@ import Conexion.SesionSistema;
 import Controlador.AtencionControlador;
 import Controlador.ClienteControlador;
 import Modelo.Cuenta;
-import Procesos.ProcesoVista;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;

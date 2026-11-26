@@ -1,14 +1,10 @@
 package Controlador;
 
-import Conexion.BaseDatosConexion;
+import DAO.NotificacionDAO.NotificacionItem;
 import Vista.PnlAdminNotificaciones;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -49,19 +45,14 @@ public class AdminNotifControlador extends BaseControlador {
             public boolean isCellEditable(int row, int column) { return false; }
         };
 
-        Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
-        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM notificaciones ORDER BY id_notificacion DESC");
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                modelo.addRow(new Object[]{
-                    rs.getInt("id_notificacion"),
-                    rs.getDate("fecha_notificacion"),
-                    rs.getString("mensaje"),
-                    rs.getBoolean("leida") ? "Leída" : "Nueva"
-                });
-            }
-        } catch (SQLException e) {
-            System.out.println("Error cargando notificaciones: " + e.getMessage());
+        List<NotificacionItem> lista = notificacionDAO.listarNotificacionesAdmin();
+        for (NotificacionItem n : lista) {
+            modelo.addRow(new Object[]{
+                n.id,
+                n.fecha,
+                n.mensaje,
+                n.leida ? "Leída" : "Nueva"
+            });
         }
 
         vista.tblNotif.setModel(modelo);
@@ -73,13 +64,9 @@ public class AdminNotifControlador extends BaseControlador {
     }
 
     private void marcarTodasLeidas() {
-        Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
-        try (PreparedStatement ps = cn.prepareStatement("UPDATE notificaciones SET leida = TRUE WHERE leida = FALSE")) {
-            ps.executeUpdate();
+        if (notificacionDAO.marcarTodasLeidas()) {
             cargarTabla();
             JOptionPane.showMessageDialog(vista, "Todas las notificaciones fueron marcadas como leídas.", "Notificaciones", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            System.out.println("Error marcando leídas: " + e.getMessage());
         }
     }
 
@@ -92,21 +79,14 @@ public class AdminNotifControlador extends BaseControlador {
         try {
             int id = Integer.parseInt(idTxt);
             LocalDate fechaSim = (getSesion().getFechaSimulada() != null) ? getSesion().getFechaSimulada() : LocalDate.now();
-            Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
-            try (PreparedStatement ps = cn.prepareStatement("UPDATE notificaciones SET leida = FALSE, fecha_notificacion = ? WHERE id_notificacion = ?")) {
-                ps.setDate(1, Date.valueOf(fechaSim));
-                ps.setInt(2, id);
-                if (ps.executeUpdate() > 0) {
-                    cargarTabla();
-                    JOptionPane.showMessageDialog(vista, "Notificación #" + id + " reenviada con fecha " + fechaSim + ".", "Reenvío Exitoso", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(vista, "No se encontró una notificación con ID #" + id, "Sin resultados", JOptionPane.WARNING_MESSAGE);
-                }
+            if (notificacionDAO.reenviarNotificacion(id, fechaSim)) {
+                cargarTabla();
+                JOptionPane.showMessageDialog(vista, "Notificación #" + id + " reenviada con fecha " + fechaSim + ".", "Reenvío Exitoso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(vista, "No se encontró una notificación con ID #" + id, "Sin resultados", JOptionPane.WARNING_MESSAGE);
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(vista, "El ID debe ser numérico.", "Error", JOptionPane.WARNING_MESSAGE);
-        } catch (SQLException e) {
-            System.out.println("Error reenviando notificación: " + e.getMessage());
         }
     }
 }

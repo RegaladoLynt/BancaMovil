@@ -1,4 +1,4 @@
-package Procesos;
+package Vista;
 
 import Modelo.Cuota;
 import Modelo.Movimiento;

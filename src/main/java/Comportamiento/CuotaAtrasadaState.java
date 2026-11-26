@@ -4,7 +4,7 @@ import Modelo.Cuota;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public class PagoAtrasadoStrategy implements CalculoCuotaStrategy {
+public class CuotaAtrasadaState implements EstadoCuota {
     @Override
     public void calcular(Cuota cuota, LocalDate fechaActual) {
         int diasDemora = (int) ChronoUnit.DAYS.between(cuota.getFechaVencimiento(), fechaActual);

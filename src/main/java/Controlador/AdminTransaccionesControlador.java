@@ -1,15 +1,12 @@
 package Controlador;
 
-import Conexion.BaseDatosConexion;
+import Modelo.Movimiento;
 import Modelo.Usuario;
 import Vista.PnlTransacciones;
 import java.awt.Color;
 import java.awt.Component;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -18,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 public class AdminTransaccionesControlador extends BaseControlador {
     private final PnlTransacciones pnl;
     private final Usuario cliente;
+    private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public AdminTransaccionesControlador(PnlTransacciones pnl, Usuario cliente) {
         this.pnl = pnl;
@@ -42,27 +40,19 @@ public class AdminTransaccionesControlador extends BaseControlador {
             public boolean isCellEditable(int row, int column) { return false; }
         };
 
-        Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
-        try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM transacciones WHERE id_usuario = ? ORDER BY id_transaccion DESC")) {
-            ps.setInt(1, cliente.getIdUsuario());
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String tipo = rs.getString("tipo");
-                    boolean esIngreso = tipo.contains("DEPOSITO") || tipo.contains("RECIBIDA") || tipo.contains("DESEMBOLSO");
-                    String signo = esIngreso ? "+ " : "- ";
-                    String fechaStr = rs.getDate("fecha_transaccion").toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        List<Movimiento> lista = usuarioDAO.listarMovimientosUsuario(cliente.getIdUsuario());
+        for (Movimiento m : lista) {
+            String tipo = m.getTipo();
+            boolean esIngreso = tipo.contains("DEPOSITO") || tipo.contains("RECIBIDA") || tipo.contains("DESEMBOLSO");
+            String signo = esIngreso ? "+ " : "- ";
 
-                    modelo.addRow(new Object[]{
-                        rs.getInt("id_transaccion"),
-                        fechaStr,
-                        tipo,
-                        rs.getString("detalle"),
-                        signo + String.format("%.2f", rs.getDouble("monto"))
-                    });
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error tabla transacciones: " + e.getMessage());
+            modelo.addRow(new Object[]{
+                m.getIdRegistro(),
+                m.getFechaOperacion().format(fmt),
+                tipo,
+                m.getDetalle(),
+                signo + String.format("%.2f", m.getMonto())
+            });
         }
 
         pnl.tblTransferencias.setModel(modelo);
@@ -85,25 +75,17 @@ public class AdminTransaccionesControlador extends BaseControlador {
         }
         try {
             int idBuscado = Integer.parseInt(idTxt);
-            Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
-            try (PreparedStatement ps = cn.prepareStatement("SELECT * FROM transacciones WHERE id_transaccion = ? AND id_usuario = ?")) {
-                ps.setInt(1, idBuscado);
-                ps.setInt(2, cliente.getIdUsuario());
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        pnl.txtFechaTrans.setText(rs.getDate("fecha_transaccion").toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        pnl.txtOp.setText(rs.getString("tipo"));
-                        pnl.txtDetail.setText(rs.getString("detalle"));
-                        pnl.txtMonto.setText(String.format("S/. %.2f", rs.getDouble("monto")));
-                    } else {
-                        JOptionPane.showMessageDialog(pnl, "No se encontró el registro #" + idBuscado, "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                }
+            Movimiento m = usuarioDAO.buscarTransaccionPorId(idBuscado, cliente.getIdUsuario());
+            if (m != null) {
+                pnl.txtFechaTrans.setText(m.getFechaOperacion().format(fmt));
+                pnl.txtOp.setText(m.getTipo());
+                pnl.txtDetail.setText(m.getDetalle());
+                pnl.txtMonto.setText(String.format("S/. %.2f", m.getMonto()));
+            } else {
+                JOptionPane.showMessageDialog(pnl, "No se encontró el registro #" + idBuscado, "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(pnl, "El N° de registro debe ser numérico.", "Error", JOptionPane.WARNING_MESSAGE);
-        } catch (SQLException ex) {
-            System.out.println("Error consultando registro: " + ex.getMessage());
         }
     }
 }

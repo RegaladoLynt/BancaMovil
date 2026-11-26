@@ -32,13 +32,13 @@ public class PnlEstadistica extends javax.swing.JPanel {
         txt1 = new javax.swing.JLabel();
         txt3 = new javax.swing.JLabel();
         txtResultado = new javax.swing.JLabel();
-        txtMensaje = new javax.swing.JLabel();
         txtMes = new javax.swing.JTextField();
         btnConsultar = new javax.swing.JButton();
         txtIngresos = new javax.swing.JTextField();
         txtEgresos = new javax.swing.JTextField();
         txtSaldo = new javax.swing.JTextField();
         txtFinal = new javax.swing.JTextField();
+        txtTexto = new javax.swing.JTextArea();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(800, 330));
@@ -79,10 +79,6 @@ public class PnlEstadistica extends javax.swing.JPanel {
         txtResultado.setText("Ganancia:");
         add(txtResultado, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 100, 30));
 
-        txtMensaje.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        txtMensaje.setText("Mensaje:");
-        add(txtMensaje, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 100, 30));
-
         txtMes.setBackground(new java.awt.Color(235, 240, 248));
         add(txtMes, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 110, 40));
 
@@ -108,6 +104,12 @@ public class PnlEstadistica extends javax.swing.JPanel {
         txtFinal.setEditable(false);
         txtFinal.setBackground(new java.awt.Color(235, 240, 248));
         add(txtFinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 210, 200, 30));
+
+        txtTexto.setColumns(20);
+        txtTexto.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        txtTexto.setRows(5);
+        txtTexto.setText("TEXTO");
+        add(txtTexto, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 260, 310, 50));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
@@ -125,9 +127,9 @@ public class PnlEstadistica extends javax.swing.JPanel {
     public javax.swing.JTextField txtEgresos;
     public javax.swing.JTextField txtFinal;
     public javax.swing.JTextField txtIngresos;
-    public javax.swing.JLabel txtMensaje;
     public javax.swing.JTextField txtMes;
     public javax.swing.JLabel txtResultado;
     public javax.swing.JTextField txtSaldo;
+    public javax.swing.JTextArea txtTexto;
     // End of variables declaration//GEN-END:variables
 }

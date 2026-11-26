@@ -1,18 +1,15 @@
 package Controlador;
 
-import Conexion.BaseDatosConexion;
+import Modelo.Movimiento;
 import Modelo.Usuario;
 import Vista.EstiloUI;
 import Vista.PanelGraficoBalance;
 import Vista.PnlEstadistica;
 import java.awt.Color;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 
@@ -54,47 +51,21 @@ public class AdminEstadisticaControlador extends BaseControlador {
         double egresos = 0;
         double saldoCierreMes = 0;
 
-        Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
+        List<Movimiento> movimientos = usuarioDAO.listarMovimientosUsuario(cliente.getIdUsuario());
+        for (Movimiento m : movimientos) {
+            LocalDate f = m.getFechaOperacion();
+            String tipo = m.getTipo();
+            double monto = m.getMonto();
+            boolean esIngreso = tipo.contains("DEPOSITO") || tipo.contains("RECIBIDA") || tipo.contains("DESEMBOLSO");
 
-        // 1. Ingresos y egresos únicamente del mes consultado
-        String sqlMes = "SELECT tipo, monto FROM transacciones WHERE id_usuario = ? AND MONTH(fecha_transaccion) = ? AND YEAR(fecha_transaccion) = ?";
-        try (PreparedStatement ps = cn.prepareStatement(sqlMes)) {
-            ps.setInt(1, cliente.getIdUsuario());
-            ps.setInt(2, mes);
-            ps.setInt(3, anio);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String tipo = rs.getString("tipo");
-                    double monto = rs.getDouble("monto");
-                    if (tipo.contains("DEPOSITO") || tipo.contains("RECIBIDA") || tipo.contains("DESEMBOLSO")) {
-                        ingresos += monto;
-                    } else {
-                        egresos += monto;
-                    }
-                }
+            if (f.getMonthValue() == mes && f.getYear() == anio) {
+                if (esIngreso) ingresos += monto;
+                else egresos += monto;
             }
-        } catch (SQLException ex) {
-            System.out.println("Error balance mensual: " + ex.getMessage());
-        }
-
-        // 2. Saldo real acumulado con el que terminó ese mes (hasta el último día del mes)
-        String sqlAcum = "SELECT tipo, monto FROM transacciones WHERE id_usuario = ? AND fecha_transaccion <= ?";
-        try (PreparedStatement ps = cn.prepareStatement(sqlAcum)) {
-            ps.setInt(1, cliente.getIdUsuario());
-            ps.setDate(2, java.sql.Date.valueOf(finDeMes));
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String tipo = rs.getString("tipo");
-                    double monto = rs.getDouble("monto");
-                    if (tipo.contains("DEPOSITO") || tipo.contains("RECIBIDA") || tipo.contains("DESEMBOLSO")) {
-                        saldoCierreMes += monto;
-                    } else {
-                        saldoCierreMes -= monto;
-                    }
-                }
+            if (!f.isAfter(finDeMes)) {
+                if (esIngreso) saldoCierreMes += monto;
+                else saldoCierreMes -= monto;
             }
-        } catch (SQLException ex) {
-            System.out.println("Error saldo cierre de mes: " + ex.getMessage());
         }
 
         double diferencia = ingresos - egresos;
@@ -115,16 +86,16 @@ public class AdminEstadisticaControlador extends BaseControlador {
         }
 
         if (diferencia < 0) {
-            pnl.txtMensaje.setText("Tenga cuidado con sus Gastos se ha detectado perdidas.");
-            pnl.txtMensaje.setForeground(new Color(192, 57, 43));
+            pnl.txtTexto.setText("Tenga cuidado con sus Gastos se ha detectado perdidas.");
+            pnl.txtTexto.setForeground(new Color(192, 57, 43));
         } else if (diferencia < 200) {
-            pnl.txtMensaje.setText("Vas por buen camino pero aún podemos mejorar.");
-            pnl.txtMensaje.setForeground(new Color(184, 134, 11));
+            pnl.txtTexto.setText("Vas por buen camino pero aún podemos mejorar.");
+            pnl.txtTexto.setForeground(new Color(184, 134, 11));
         } else {
-            pnl.txtMensaje.setText("Excelente!!");
-            pnl.txtMensaje.setForeground(new Color(30, 132, 73));
+            pnl.txtTexto.setText("Excelente!!");
+            pnl.txtTexto.setForeground(new Color(30, 132, 73));
         }
 
-        EstiloUI.cambiarVista(pnl.PnlRepresentacion, new PanelGraficoBalance(ingresos, egresos));
+        EstiloUI.mostrarGrafico(pnl.PnlRepresentacion, new PanelGraficoBalance(ingresos, egresos));
     }
 }

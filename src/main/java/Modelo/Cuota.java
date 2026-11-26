@@ -29,6 +29,21 @@ public class Cuota {
         this.estadoCuota = estadoCuota;
     }
 
+    public CuotaMemento guardarEstado() {
+        return new CuotaMemento(montoInteres, montoMulta, fechaVencimiento, fechaPago, diasAtraso, estadoCuota);
+    }
+
+    public void restaurarEstado(CuotaMemento m) {
+        if (m != null) {
+            this.montoInteres = m.getMontoInteres();
+            this.montoMulta = m.getMontoMulta();
+            this.fechaVencimiento = m.getFechaVencimiento();
+            this.fechaPago = m.getFechaPago();
+            this.diasAtraso = m.getDiasAtraso();
+            this.estadoCuota = m.getEstadoCuota();
+        }
+    }
+
     public int getIdCuota() { return idCuota; }
     public void setIdCuota(int idCuota) { this.idCuota = idCuota; }
 

@@ -5,7 +5,6 @@ import Controlador.AuthControlador;
 import Controlador.ClienteControlador;
 import Controlador.LoginControlador;
 import Modelo.Cuenta;
-import Procesos.ProcesoVista;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;

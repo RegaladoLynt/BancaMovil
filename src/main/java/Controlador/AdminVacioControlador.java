@@ -1,6 +1,7 @@
 package Controlador;
 
-import Conexion.BaseDatosConexion;
+import Modelo.Cuota;
+import Modelo.Usuario;
 import Vista.FrmDashboardAdmin;
 import Vista.PnlAdminVacio;
 import java.awt.Color;
@@ -8,12 +9,9 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -37,7 +35,6 @@ public class AdminVacioControlador extends BaseControlador {
         configurarTablaEstetica();
         cargarCarteraClientes();
 
-        // Al hacer clic en cualquier fila, rellena el DNI arriba y abre su expediente
         vista.tblClientes.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -66,72 +63,43 @@ public class AdminVacioControlador extends BaseControlador {
         DefaultTableModel modelo = new DefaultTableModel(
                 new Object[]{"DNI", "Cliente", "N° Cuenta", "Saldo (S/.)", "Situación Crediticia"}, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
         };
 
         LocalDate fechaSim = (getSesion().getFechaSimulada() != null) ? getSesion().getFechaSimulada() : LocalDate.now();
-        Connection cn = BaseDatosConexion.GetInstancia().GetConectar();
+        List<Usuario> clientes = usuarioDAO.listarTodosLosClientes();
 
-        String sql = "SELECT u.id_usuario, u.dni, CONCAT(u.nombres, ' ', u.apellidos) AS cliente, u.estado, " +
-                     "c.numero_cuenta, c.saldo " +
-                     "FROM usuarios u " +
-                     "LEFT JOIN cuentas c ON u.id_usuario = c.id_usuario " +
-                     "WHERE u.rol = 'CLIENTE' ORDER BY u.id_usuario ASC";
-
-        try (PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int idUsuario = rs.getInt("id_usuario");
-                String estadoCuenta = rs.getString("estado");
-                String situacion = determinarSituacionCliente(cn, idUsuario, estadoCuenta, fechaSim);
-
-                modelo.addRow(new Object[]{
-                    rs.getString("dni"),
-                    rs.getString("cliente"),
-                    rs.getString("numero_cuenta") != null ? rs.getString("numero_cuenta") : "Sin cuenta",
-                    String.format("S/. %.2f", rs.getDouble("saldo")),
-                    situacion
-                });
-            }
-        } catch (SQLException e) {
-            System.out.println("Error cargando cartera de clientes: " + e.getMessage());
+        for (Usuario u : clientes) {
+            String situacion = determinarSituacionCliente(u, fechaSim);
+            modelo.addRow(new Object[]{
+                u.getDni(),
+                u.getNombreCompleto(),
+                u.getNumeroCuenta() != null ? u.getNumeroCuenta() : "Sin cuenta",
+                String.format("S/. %.2f", u.getSaldo()),
+                situacion
+            });
         }
 
         vista.tblClientes.setModel(modelo);
         aplicarColoresPorFila();
     }
 
-    private String determinarSituacionCliente(Connection cn, int idUsuario, String estadoCuenta, LocalDate fechaSim) {
-        if ("BLOQUEADO".equalsIgnoreCase(estadoCuenta)) {
+    private String determinarSituacionCliente(Usuario u, LocalDate fechaSim) {
+        if ("BLOQUEADO".equalsIgnoreCase(u.getEstado())) {
             return "INACTIVO";
         }
-
-        String sqlCuotas = "SELECT c.fecha_vencimiento FROM cuotas c " +
-                           "INNER JOIN creditos cr ON c.id_credito = cr.id_credito " +
-                           "WHERE cr.id_usuario = ? AND c.estado = 'POR_PAGAR'";
-
+        List<Cuota> cuotas = creditoDAO.listarHistorialCuotasUsuario(u.getIdUsuario());
         boolean tieneCreditoActivo = false;
         boolean tieneAtraso = false;
         boolean vencePronto = false;
 
-        try (PreparedStatement ps = cn.prepareStatement(sqlCuotas)) {
-            ps.setInt(1, idUsuario);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    tieneCreditoActivo = true;
-                    LocalDate venc = rs.getDate("fecha_vencimiento").toLocalDate();
-                    long dias = ChronoUnit.DAYS.between(fechaSim, venc);
-                    if (dias < 0) {
-                        tieneAtraso = true;
-                    } else if (dias <= 3) {
-                        vencePronto = true;
-                    }
-                }
+        for (Cuota c : cuotas) {
+            if ("PENDIENTE".equals(c.getEstadoCuota())) {
+                tieneCreditoActivo = true;
+                long dias = ChronoUnit.DAYS.between(fechaSim, c.getFechaVencimiento());
+                if (dias < 0) tieneAtraso = true;
+                else if (dias <= 3) vencePronto = true;
             }
-        } catch (SQLException e) {
-            System.out.println("Error evaluando cuotas cartera: " + e.getMessage());
         }
 
         if (tieneAtraso) return "CON RETRASO";
@@ -150,23 +118,23 @@ public class AdminVacioControlador extends BaseControlador {
 
                 switch (situacion) {
                     case "INACTIVO":
-                        c.setBackground(new Color(44, 62, 80));    // Negro carbón
+                        c.setBackground(new Color(44, 62, 80));
                         c.setForeground(Color.WHITE);
                         break;
                     case "CON RETRASO":
-                        c.setBackground(new Color(250, 219, 216)); // Rojo pastel
+                        c.setBackground(new Color(250, 219, 216));
                         c.setForeground(new Color(120, 40, 31));
                         break;
                     case "VENCE PRONTO (0-3d)":
-                        c.setBackground(new Color(252, 243, 207)); // Amarillo pastel
+                        c.setBackground(new Color(252, 243, 207));
                         c.setForeground(new Color(126, 81, 9));
                         break;
                     case "CRÉDITO AL DÍA":
-                        c.setBackground(new Color(235, 222, 240)); // Morado pastel
+                        c.setBackground(new Color(235, 222, 240));
                         c.setForeground(new Color(74, 35, 90));
                         break;
-                    default: // SIN CRÉDITO
-                        c.setBackground(new Color(213, 245, 227)); // Verde pastel
+                    default:
+                        c.setBackground(new Color(213, 245, 227));
                         c.setForeground(new Color(20, 90, 50));
                         break;
                 }
